@@ -1,3 +1,17 @@
 spring:
   application:
     name: blog-backend
+  data:
+    mongodb:
+      uri: mongodb+srv://piyush68:Piyush3808@cluster0.nkmt81x.mongodb.net/Blog?retryWrites=true&w=majority
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: thepensieri@gmail.com
+    password: euqo uuyq khbx wyet
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

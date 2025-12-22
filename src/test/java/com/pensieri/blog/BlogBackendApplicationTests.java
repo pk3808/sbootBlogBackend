@@ -1,4 +1,4 @@
-package com.pensieri.blogbackend;
+package com.pensieri.blog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
