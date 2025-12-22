@@ -24,7 +24,7 @@ public class User {
     private boolean isVerified; 
 
     private AuthProvider authProvider; // Enum: LOCAL or GOOGLE
-    private Role role; // Enum: USER or ADMIN
+    private Role role; 
 
     private boolean isActive;
     private boolean isSubscribed; // True if user has paid membership
