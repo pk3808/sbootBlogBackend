@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -24,13 +25,12 @@ public class UserService {
     public User registerNewUser(User user) {
         Optional<User> existingUserOpt = userRepository.findByEmail(user.getEmail());
 
-        if(existingUserOpt.isPresent()) {
+        if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
             if (existingUser.isVerified()) {
                 throw new RuntimeException("Email already active and verified: " + user.getEmail());
             } else {
-                // User exists but verification pending - resend OTP logic
-                // Update password just in case they changed it
+                // User exists but verification pending
                 existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
                 existingUser.setName(user.getName()); // Update name
                 return generateAndSendOtp(existingUser);
@@ -38,11 +38,10 @@ public class UserService {
         }
 
         // New user
-        // Encrypt the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-        user.setVerified(false); // Default to false
+        user.setVerified(false);
         
         return generateAndSendOtp(user);
     }
@@ -52,7 +51,7 @@ public class UserService {
         user.setOtp(otp);
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
         
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(user); // Save first to get ID/Update
         
         // Send Email
         emailService.sendOtpEmail(user.getEmail(), otp);
@@ -65,7 +64,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         if (user.isVerified()) {
-            return true; // Already verified
+            return true;
         }
 
         if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
@@ -87,10 +86,36 @@ public class UserService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-        if(user.isVerified()) {
+        if (user.isVerified()) {
              throw new RuntimeException("User already verified");
         }
         generateAndSendOtp(user);
+    }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+        
+        emailService.sendResetEmail(user.getEmail(), token);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetToken(token)
+            .orElseThrow(() -> new RuntimeException("Invalid Token"));
+            
+        if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Token Expired");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+        userRepository.save(user);
     }
 
     public Optional<User> getUserById(String id) {
@@ -101,18 +126,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    // 4. Update user
     public User updateUser(String id, User user) {
         if (userRepository.existsById(id)) {
-            user.setId(id); // Ensure ID matches
+            user.setId(id);
             user.setUpdatedAt(LocalDateTime.now());
-            // In a real app, we would copy specific fields to avoid overwriting everything
             return userRepository.save(user);
         }
         throw new RuntimeException("User not found: " + id);
     }
 
-    // 5. Delete user
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }

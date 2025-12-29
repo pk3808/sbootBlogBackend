@@ -32,8 +32,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll() // DEBUG: ALLOW EVERYTHING to rule out SecurityConfig path matching issues
-                .anyRequest().authenticated() // (This won't be reached due to /** above)
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/verify", "/api/auth/resend").permitAll()
+                .requestMatchers("/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                .requestMatchers("/api/").permitAll()
+                .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())

@@ -34,6 +34,8 @@ public class User {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
 
     // Simple inner classes to group related fields (like in your JSON)
     @Data

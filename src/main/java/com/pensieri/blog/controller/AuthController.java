@@ -66,6 +66,16 @@ public class AuthController {
         return response;
     }
 
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestParam String email) {
+        userService.forgotPassword(email);
+        return "Password reset link sent to your email.";
+    }
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody ResetPasswordRequest request) { // DTO needed
+        userService.resetPassword(request.getToken(), request.getNewPassword());
+        return "Password successfully reset.";
+    }
     // DTOs
     public static class VerifyRequest {
         private String email;
@@ -85,5 +95,15 @@ public class AuthController {
         public void setEmail(String email) { this.email = email; }
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
+    }
+
+    public static class ResetPasswordRequest {
+        private String token;
+        private String newPassword;
+
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+        public String getNewPassword() { return newPassword; }
+        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
     }
 }

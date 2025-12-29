@@ -23,8 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         if (!user.isVerified()) {
+            System.out.println("LOGIN FAILED: User " + email + " is NOT verified.");
             throw new UsernameNotFoundException("User is not verified. Please verify your email first.");
         }
+        System.out.println("LOGIN SUCCESS: User " + email + " found and verified.");
 
         // Return Spring Security's User object (Standard Spring class)
         return new org.springframework.security.core.userdetails.User(

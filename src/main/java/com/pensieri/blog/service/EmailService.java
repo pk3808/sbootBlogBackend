@@ -39,6 +39,22 @@ public class EmailService {
         }
     }
 
+    public void sendResetEmail(String toEmail, String token) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("thepensieri@gmail.com");
+            message.setTo(toEmail);
+            message.setSubject("Reset Your Password - Pensieri");
+            message.setText("To reset your password, click the link below:\n\n" +
+                    "http://localhost:3000/reset-password?token=" + token + "\n\n" +
+                    "This link expires in 15 minutes.");
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send reset email");
+        }
+    }
+
     private String loadHtmlTemplate(String otp) {
         try {
             org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource("templates/otp-email.html");
