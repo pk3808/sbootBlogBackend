@@ -36,9 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             try {
                 username = jwtUtils.extractUsername(jwt);
+                System.out.println("JWT Filter: Extracted username: " + username);
             } catch (Exception e) {
-                // Token invalid or expired
+                System.out.println("JWT Filter: Error extraction: " + e.getMessage());
             }
+        } else {
+            System.out.println("JWT Filter: No Bearer header found or invalid format");
         }
 
         // 2. Validate Token and Load User
@@ -52,6 +55,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 // 3. Set Authentication in Context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("JWT Filter: Authentication set for user: " + username);
+            } else {
+                System.out.println("JWT Filter: Token validation failed");
             }
         }
         filterChain.doFilter(request, response);

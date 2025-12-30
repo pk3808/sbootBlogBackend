@@ -17,14 +17,24 @@ public class Post {
     private String content;
     private List<String> tags;
     private String category;
+    private String coverImage; // URL from Cloudinary
     private int readTime; // In minutes
+    @com.fasterxml.jackson.annotation.JsonProperty("isPremium")
     private boolean isPremium; // If true, only subscribed users can read
     private PostStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String authorId;
+    private Author author;
+
+    @Data
+    public static class Author {
+        private String id;
+        private String name;
+        private String email;
+    }
 
     private int likeCount;
+    @com.fasterxml.jackson.annotation.JsonProperty("isDeleted")
     private boolean isDeleted;
     private String deletedBy;
     private LocalDateTime deletedAt;

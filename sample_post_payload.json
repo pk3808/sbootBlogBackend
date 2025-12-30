@@ -1,0 +1,13 @@
+{
+    "title": "Mastering Image Uploads with Spring Boot & Cloudinary",
+    "content": "<h2>Why Cloudinary?</h2><p>Managing images in a modern web application can be tricky. You have to worry about <b>storage</b>, <b>optimization</b>, and <b>delivery speeds</b>. That's where Cloudinary comes in.</p><blockquote>Cloudinary provides a comprehensive cloud-based image and video management solution.</blockquote><h3>Step 1: The Setup</h3><p>First, we add the dependency to our <code>pom.xml</code>. This allows our Spring Boot application to communicate with Cloudinary's powerful API.</p><ul><li>Add Dependency</li><li>Configure Keys</li><li>Create Service</li></ul><p>And just like that, we have secure, scalable image uploads!</p>",
+    "category": "Technology",
+    "tags": [
+        "Spring Boot",
+        "Cloudinary",
+        "Java",
+        "Tutorial"
+    ],
+    "isPremium": false,
+    "status": "PUBLISHED"
+}

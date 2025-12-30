@@ -203,13 +203,19 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"My First Blog Post\",\n    \"content\": \"This is the content of my first post via API!\",\n    \"authorId\": \"USER_ID_HERE\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "coverImage",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "postData",
+									"value": "{\n    \"title\": \"My Rich Post\",\n    \"content\": \"<p>Hello <b>World</b>!</p>\",\n    \"category\": \"Technology\",\n    \"authorId\": \"USER_ID_HERE\"\n}",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{base_url}}/posts",
