@@ -66,6 +66,14 @@ public class AuthController {
         return response;
     }
 
+    @PostMapping("/google")
+    public Map<String, String> googleLogin(@RequestBody GoogleLoginRequest request) {
+        String token = userService.googleLogin(request.getToken());
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return response;
+    }
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
         userService.forgotPassword(email);
@@ -77,6 +85,12 @@ public class AuthController {
         return "Password successfully reset.";
     }
     // DTOs
+    public static class GoogleLoginRequest {
+        private String token;
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+    }
+
     public static class VerifyRequest {
         private String email;
         private String otp;

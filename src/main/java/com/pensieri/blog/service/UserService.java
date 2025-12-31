@@ -11,6 +11,11 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+import com.pensieri.blog.model.AuthProvider;
+import com.pensieri.blog.security.JwtUtils;
+
 @Service
 public class UserService {
     @Autowired
@@ -21,7 +26,11 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
-
+@Autowired
+    private FirebaseAuth firebaseAuth;
+    
+    @Autowired
+    private com.pensieri.blog.security.JwtUtils jwtUtils;
     public User registerNewUser(User user) {
         Optional<User> existingUserOpt = userRepository.findByEmail(user.getEmail());
 
@@ -141,5 +150,59 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+    public String googleLogin(String idToken) {
+        try {
+            // 1. Verify Google Token
+            FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+            String email = decodedToken.getEmail();
+            String name = decodedToken.getName();
+            String picture = decodedToken.getPicture(); // Extract picture URL
+
+            // 2. Check existence
+            Optional<User> userOpt = userRepository.findByEmail(email);
+            User user;
+
+            if (userOpt.isPresent()) {
+                user = userOpt.get();
+                // Optional: Update profile image if they haven't set a custom one? 
+                // Or always update it? Let's assume we update it if it's currently null.
+                if (user.getProfileImage() == null && picture != null) {
+                        user.setProfileImage(picture);
+                        userRepository.save(user);
+                }
+            } else {
+                // 3. Register New User
+                user = new User();
+                user.setEmail(email);
+                user.setName(name);
+                user.setProfileImage(picture); // Save Google Image
+                user.setAuthProvider(AuthProvider.GOOGLE);
+                user.setVerified(true);
+                user.setCreatedAt(LocalDateTime.now());
+                user.setUpdatedAt(LocalDateTime.now());
+                user.setPassword(""); 
+                
+                // Initialize empty social profiles if you want (optional)
+                user.setSocialProfiles(new User.SocialProfiles());
+                
+                userRepository.save(user);
+            }
+
+            // 4. Generate Token (Using dummy UserDetails)
+            org.springframework.security.core.userdetails.UserDetails userDetails = 
+                org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password("")
+                .authorities("USER")
+                .build();
+                
+            return jwtUtils.generateToken(userDetails);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Google Login Failed", e);
+        }
     }
 }

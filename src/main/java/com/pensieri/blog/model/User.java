@@ -19,6 +19,14 @@ public class User {
     private String email;
     private String password; 
     
+    // --- NEW PROFILE FIELDS ---
+    private String profileImage;
+    private String bio;
+    private String location;
+    
+    // Inner class for Social Profiles
+    private SocialProfiles socialProfiles;
+    // --------------------------    
     private String otp;
     private LocalDateTime otpExpiry;
     private boolean isVerified; 
@@ -54,5 +62,14 @@ public class User {
     public static class BlogQuota {
         private int monthlyLimit;
         private int usedThisMonth;
+    }
+
+    // --- NEW INNER CLASS ---
+    @Data
+    public static class SocialProfiles {
+        private String instagram;
+        private String twitter;
+        private String linkedin;
+        private String facebook;
     }
 }
