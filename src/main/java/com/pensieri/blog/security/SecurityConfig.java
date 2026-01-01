@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/verify", "/api/auth/resend", "/api/auth/google").permitAll()
                 .requestMatchers("/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .requestMatchers("/api/posts/categories").permitAll() // Must be before /api/posts/**
+                .requestMatchers("/api/search/**").permitAll() // Public Search
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                 .requestMatchers("/api/", "/error").permitAll()
                 .anyRequest().authenticated()

@@ -47,8 +47,9 @@ public class PostService {
     }
 
     // 4. Category
+    // 4. Category
     public List<Post> getPostsByCategory(String category) {
-        return postRepository.findByCategory(category);
+        return postRepository.findByCategoryAndStatusAndIsDeletedFalse(category, PostStatus.PUBLISHED);
     }
 
     // --------------------
@@ -64,5 +65,13 @@ public class PostService {
 
     public void deletePost(String id) {
         postRepository.deleteById(id);
+    }
+
+    public List<com.pensieri.blog.dto.CategoryStats> getCategoryStats() {
+        return postRepository.getCategoryStats();
+    }
+
+    public List<Post> searchPosts(String query) {
+        return postRepository.findByTitleContainingIgnoreCaseAndStatusAndIsDeletedFalse(query, PostStatus.PUBLISHED);
     }
 }

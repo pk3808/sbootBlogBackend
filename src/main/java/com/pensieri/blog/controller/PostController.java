@@ -53,6 +53,12 @@ public class PostController {
         return postService.getPostsByCategory(category);
     }
 
+    // GET /api/posts/categories
+    @GetMapping("/categories")
+    public List<com.pensieri.blog.dto.CategoryStats> getCategoryStats() {
+        return postService.getCategoryStats();
+    }
+
     // ----------------------
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

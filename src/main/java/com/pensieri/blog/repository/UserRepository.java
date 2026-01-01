@@ -11,4 +11,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByRole(Role role);
     Optional<User> findByResetToken(String resetToken);
     boolean existsByEmail(String email);
+    
+    // Search by Name (Case Insensitive)
+    java.util.List<User> findByNameContainingIgnoreCase(String name);
 }
